@@ -10,9 +10,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">
-                MB
-              </span>
+              <span className="text-white font-bold text-sm">MB</span>
             </div>
 
             <span className="text-xl font-bold text-gray-800">
@@ -33,7 +31,7 @@ export default function Navbar() {
               href="/about"
               className="text-gray-600 hover:text-purple-600 transition duration-300 font-medium"
             >
-              À propos
+              A propos
             </Link>
 
             <Link
@@ -42,13 +40,20 @@ export default function Navbar() {
             >
               Blog
             </Link>
+
+            <Link
+              href="/movies"
+              className="text-gray-600 hover:text-red-600 transition duration-300 font-medium"
+            >
+              Films
+            </Link>
           </div>
 
           {/* Bouton mobile */}
           <div className="md:hidden">
             <button
               type="button"
-              aria-label="Ouvrir le menu de navigation"
+              aria-label="Ouvrir le menu"
               className="text-gray-600 hover:text-blue-600"
             >
               <svg
