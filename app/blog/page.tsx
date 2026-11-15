@@ -17,7 +17,7 @@ type Article = {
 // Fonction pour récupérer les articles depuis l'API
 async function getArticles(): Promise<Article[]> {
   try {
-    const res = await fetch("http://localhost:3000/api/articles", {
+    const res = await fetch("http://localhost:3001/api/articles", {
       cache: "no-store",
     });
 
