@@ -2,47 +2,38 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-// TypeScript : structure d'un article
+// Structure TypeScript d'un article
 type Article = {
+  id: number;
   title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
   date: string;
   readTime: string;
   category: string;
-  content: string;
+  author: string;
 };
 
-// Données des articles
-const articles: Record<string, Article> = {
-  "mon-premier-article": {
-    title: "Mon premier article",
-    date: "15 Janvier 2025",
-    readTime: "3 min",
-    category: "Personnel",
-    content: `Ceci est mon tout premier article ! Je suis très content de partager mes idées avec vous.
+// Fonction pour récupérer les articles depuis l'API
+async function getArticles(): Promise<Article[]> {
+  try {
+    const res = await fetch("http://localhost:3001/api/articles", {
+      cache: "no-store",
+    });
 
-Ce blog va me permettre de documenter mon parcours d'apprentissage en développement web.`,
-  },
+    if (!res.ok) {
+      throw new Error("Erreur lors de la récupération des articles");
+    }
 
-  "apprendre-nextjs": {
-    title: "Comment apprendre Next.js",
-    date: "16 Janvier 2025",
-    readTime: "8 min",
-    category: "Tech",
-    content: `Next.js est un framework fantastique ! Voici comment l'apprendre étape par étape.
+    const articles: Article[] = await res.json();
 
-Commencez par maîtriser React, puis explorez les fonctionnalités avancées de Next.js.`,
-  },
-
-  "react-vs-nextjs": {
-    title: "React vs Next.js",
-    date: "17 Janvier 2025",
-    readTime: "5 min",
-    category: "Tech",
-    content: `React et Next.js sont complémentaires. React permet de construire des interfaces avec des composants, tandis que Next.js apporte notamment le routage et les optimisations.
-
-Next.js ajoute le routing, l'optimisation et bien plus encore.`,
-  },
-};
+    return articles;
+  } catch (error) {
+    console.error("Erreur API :", error);
+    return [];
+  }
+}
 
 // Page dynamique d'un article
 export default async function ArticlePage({
@@ -53,10 +44,13 @@ export default async function ArticlePage({
   // Récupérer le slug depuis l'URL
   const { slug } = await params;
 
-  // Rechercher l'article correspondant
-  const article = articles[slug];
+  // Récupérer les articles depuis l'API
+  const articles = await getArticles();
 
-  // Si l'article n'existe pas, afficher la page 404
+  // Rechercher l'article correspondant au slug
+  const article = articles.find((item) => item.slug === slug);
+
+  // Afficher une page 404 si l'article n'existe pas
   if (!article) {
     notFound();
   }
@@ -88,11 +82,17 @@ export default async function ArticlePage({
           Retour au blog
         </Link>
 
-        {/* Contenu principal de l'article */}
+        {/* Article */}
         <article className="bg-white rounded-xl shadow-lg overflow-hidden">
 
-          {/* En-tête de l'article */}
-          <header className="h-64 bg-gradient-to-br from-blue-500 to-purple-600 relative">
+          {/* En-tête */}
+          <header
+            className={`h-64 relative bg-gradient-to-br ${
+              article.category === "Tech"
+                ? "from-blue-500 to-purple-600"
+                : "from-green-500 to-blue-600"
+            }`}
+          >
             <div className="absolute inset-0 bg-black/30" />
 
             <div className="absolute bottom-8 left-8 right-8">
@@ -104,41 +104,45 @@ export default async function ArticlePage({
                 {article.title}
               </h1>
 
-              <div className="flex items-center text-white/90 space-x-4">
-                <span>{article.date}</span>
+              <div className="flex flex-wrap items-center text-white/90 gap-4">
+                <span>
+                  {new Date(article.date).toLocaleDateString("fr-FR")}
+                </span>
+
                 <span aria-hidden="true">•</span>
+
                 <span>{article.readTime} de lecture</span>
               </div>
             </div>
           </header>
 
-          {/* Corps de l'article */}
+          {/* Contenu de l'article */}
           <div className="p-8">
             <div className="max-w-none">
 
-              <p className="text-lg text-gray-700 leading-relaxed mb-6 whitespace-pre-line">
+              <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line mb-8">
                 {article.content}
               </p>
 
-              <p className="text-gray-600 leading-relaxed mb-6">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna
-                aliqua. Ut enim ad minim veniam.
-              </p>
-
-              <p className="text-gray-600 leading-relaxed">
-                Duis aute irure dolor in reprehenderit in voluptate velit
-                esse cillum dolore eu fugiat nulla pariatur.
-              </p>
+              {/* Informations complémentaires */}
+              <div className="border-t border-gray-200 pt-6">
+                <p className="text-gray-500 text-sm">
+                  Publié par{" "}
+                  <span className="font-semibold text-gray-700">
+                    {article.author}
+                  </span>
+                </p>
+              </div>
 
             </div>
 
             {/* Pied de l'article */}
-            <footer className="mt-12 pt-8 border-t border-gray-200">
+            <footer className="mt-8 pt-8 border-t border-gray-200">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
 
                 <p className="text-sm text-gray-500">
-                  Article publié le {article.date}
+                  Article publié le{" "}
+                  {new Date(article.date).toLocaleDateString("fr-FR")}
                 </p>
 
                 <Link
