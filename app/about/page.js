@@ -29,7 +29,7 @@ export default function AboutPage() {
                 </div>
 
                 <h2 className="text-2xl font-semibold text-gray-800">
-                  [Votre nom]
+                  serigne khadim mbacke ba 
                 </h2>
 
                 <p className="text-purple-600 font-medium">
