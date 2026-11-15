@@ -2,17 +2,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+// TypeScript : structure d'un article
+type Article = {
+  title: string;
+  date: string;
+  readTime: string;
+  category: string;
+  content: string;
+};
+
 // Données des articles
-const articles: Record<
-  string,
-  {
-    title: string;
-    date: string;
-    readTime: string;
-    category: string;
-    content: string;
-  }
-> = {
+const articles: Record<string, Article> = {
   "mon-premier-article": {
     title: "Mon premier article",
     date: "15 Janvier 2025",
@@ -44,7 +44,7 @@ Next.js ajoute le routing, l'optimisation et bien plus encore.`,
   },
 };
 
-// Page dynamique
+// Page dynamique d'un article
 export default async function ArticlePage({
   params,
 }: {
@@ -53,10 +53,10 @@ export default async function ArticlePage({
   // Récupérer le slug depuis l'URL
   const { slug } = await params;
 
-  // Rechercher l'article
+  // Rechercher l'article correspondant
   const article = articles[slug];
 
-  // Vérifier si l'article existe
+  // Si l'article n'existe pas, afficher la page 404
   if (!article) {
     notFound();
   }
@@ -65,7 +65,7 @@ export default async function ArticlePage({
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto px-4">
 
-        {/* Bouton retour */}
+        {/* Bouton retour au blog */}
         <Link
           href="/blog"
           className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-8 transition-colors duration-300"
@@ -75,6 +75,7 @@ export default async function ArticlePage({
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -87,16 +88,14 @@ export default async function ArticlePage({
           Retour au blog
         </Link>
 
-        {/* Article */}
+        {/* Contenu principal de l'article */}
         <article className="bg-white rounded-xl shadow-lg overflow-hidden">
 
           {/* En-tête de l'article */}
-          <div className="h-64 bg-gradient-to-br from-blue-500 to-purple-600 relative">
-
-            <div className="absolute inset-0 bg-black/30"></div>
+          <header className="h-64 bg-gradient-to-br from-blue-500 to-purple-600 relative">
+            <div className="absolute inset-0 bg-black/30" />
 
             <div className="absolute bottom-8 left-8 right-8">
-
               <span className="bg-white/90 text-gray-800 px-3 py-1 rounded-full text-sm font-medium mb-4 inline-block">
                 {article.category}
               </span>
@@ -107,14 +106,13 @@ export default async function ArticlePage({
 
               <div className="flex items-center text-white/90 space-x-4">
                 <span>{article.date}</span>
-                <span>•</span>
+                <span aria-hidden="true">•</span>
                 <span>{article.readTime} de lecture</span>
               </div>
-
             </div>
-          </div>
+          </header>
 
-          {/* Contenu de l'article */}
+          {/* Corps de l'article */}
           <div className="p-8">
             <div className="max-w-none">
 
@@ -136,13 +134,12 @@ export default async function ArticlePage({
             </div>
 
             {/* Pied de l'article */}
-            <div className="mt-12 pt-8 border-t border-gray-200">
-
+            <footer className="mt-12 pt-8 border-t border-gray-200">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
 
-                <div className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500">
                   Article publié le {article.date}
-                </div>
+                </p>
 
                 <Link
                   href="/blog"
@@ -152,11 +149,9 @@ export default async function ArticlePage({
                 </Link>
 
               </div>
-
-            </div>
+            </footer>
           </div>
         </article>
-
       </div>
     </div>
   );
